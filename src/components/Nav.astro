@@ -45,6 +45,8 @@ const links = [
 
 <nav id="main-nav">
   <div class="nav-gradual-blur">
+    <!-- Sutil viñeta oscura en la parte superior para contrastar los botones -->
+    <div class="nav-vignette"></div>
     {blurLayers.map((layer, index) => (
       <div
         class="nav-blur-slice"
@@ -166,6 +168,17 @@ const links = [
   }
   .nav-blur-slice {
     z-index: auto;
+  }
+  .nav-vignette {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(13, 11, 8, 0.95) 0%,
+      rgba(13, 11, 8, 0.6) 55%,
+      transparent 85%
+    );
+    z-index: 13;
+    pointer-events: none;
   }
 
   .nav-inner {
