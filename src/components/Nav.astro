@@ -1,5 +1,38 @@
 ---
 // Navigation Component
+
+// ─── GradualBlur layers (React Bits concept, native HTML/CSS) ───
+const BLUR_COUNT = 12;
+const BLUR_STRENGTH = 1.2;
+
+function bezier(p) {
+  return p * p * (3 - 2 * p);
+}
+
+interface BlurLayer {
+  blur: string;
+  mask: string;
+}
+
+const blurLayers: BlurLayer[] = (() => {
+  const layers: BlurLayer[] = [];
+  for (let i = 1; i <= BLUR_COUNT; i++) {
+    // Reversed: top layers (i=1) get strong blur, bottom layers (i=12) get weak blur
+    const progress = 1 - i / BLUR_COUNT;
+    const curveVal = bezier(progress);
+    const blurValue = Math.pow(2, curveVal * 4) * 0.0625 * BLUR_STRENGTH;
+    const increment = 100 / BLUR_COUNT;
+    const p1 = Math.round((increment * i - increment) * 10) / 10;
+    const p2 = Math.round(increment * i * 10) / 10;
+    const p3 = Math.round((increment * i + increment) * 10) / 10;
+    const p4 = Math.round((increment * i + increment * 2) * 10) / 10;
+    let gradient = `transparent ${p1}%, black ${p2}%`;
+    if (p3 <= 100) gradient += `, black ${p3}%`;
+    if (p4 <= 100) gradient += `, transparent ${p4}%`;
+    layers.push({ blur: `${blurValue.toFixed(3)}rem`, mask: gradient });
+  }
+  return layers;
+})();
 const links = [
   { label: 'Cenotes', href: '#cenotes' },
   { label: 'Videomapping', href: '#videomapping' },
@@ -11,6 +44,23 @@ const links = [
 ---
 
 <nav id="main-nav">
+  <div class="nav-gradual-blur">
+    {blurLayers.map((layer, index) => (
+      <div
+        class="nav-blur-slice"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          WebkitMaskImage: `linear-gradient(to bottom, ${layer.mask})`,
+          maskImage: `linear-gradient(to bottom, ${layer.mask})`,
+          backdropFilter: `blur(${layer.blur})`,
+          WebkitBackdropFilter: `blur(${layer.blur})`,
+          pointerEvents: 'none',
+          zIndex: index + 1
+        }}
+      ></div>
+    ))}
+  </div>
   <div class="nav-inner">
     <a href="/" class="nav-logo">
       <span class="nav-logo-text">SANTA ROSA</span>
@@ -72,18 +122,6 @@ const links = [
     };
     window.addEventListener('scroll', onFirstScroll, { passive: true });
 
-    // ─── Scroll-to-shade effect ───
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          nav.classList.toggle('nav-scrolled', window.scrollY > 60);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
-
     function openDrawer() {
       drawer.classList.add('open');
       drawer.setAttribute('aria-hidden', 'false');
@@ -115,11 +153,19 @@ const links = [
     opacity: 0;
     pointer-events: none;
   }
-  #main-nav.nav-scrolled {
-    background: rgba(44, 36, 22, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 16px 0;
+
+  .nav-gradual-blur {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: calc(100% + 20px);
+    z-index: -1;
+    isolation: isolate;
+    pointer-events: none;
+  }
+  .nav-blur-slice {
+    z-index: auto;
   }
 
   .nav-inner {
@@ -139,7 +185,7 @@ const links = [
     color: var(--color-limestone);
     text-transform: uppercase;
   }
-  .nav-scrolled .nav-logo-text { font-size: 17px; }
+  /* Nav stays the same, only background changes */
 
   .nav-links {
     list-style: none;
