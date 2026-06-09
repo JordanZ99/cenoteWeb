@@ -1,0 +1,104 @@
+---
+// Ubicación — Map + Contact
+---
+
+<section id="ubicacion" class="section ubicacion-section">
+  <div class="section-inner">
+    <div class="ubicacion-layout">
+      <div class="ubicacion-map">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3726.5!2d-89.35!3d20.75!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDQ1JzAwLjAiTiA4OcKwMjEnMDAuMCJX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Ubicación Cenote Santa Rosa"
+        ></iframe>
+      </div>
+      <div class="ubicacion-info">
+        <div class="ubicacion-text fade-left">
+          <h2 class="ubicacion-title">Encuéntranos</h2>
+          <div class="ubicacion-detail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div>
+              <span class="ubicacion-label">Dirección</span>
+              <span class="ubicacion-value">Cenote Santa Rosa, Homún, Yucatán</span>
+            </div>
+          </div>
+          <div class="ubicacion-detail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            <div>
+              <span class="ubicacion-label">Teléfono / WhatsApp</span>
+              <span class="ubicacion-value">+52 999 508 5367</span>
+            </div>
+          </div>
+          <div class="ubicacion-detail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div>
+              <span class="ubicacion-label">Horario</span>
+              <span class="ubicacion-value">Todos los días 10:00 AM — 6:00 PM</span>
+            </div>
+          </div>
+          <div class="ubicacion-detail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l4-3v14l-4-3"/></svg>
+            <div>
+              <span class="ubicacion-label">Desde Mérida</span>
+              <span class="ubicacion-value">A 1h 10min en auto</span>
+            </div>
+          </div>
+          <div class="ubicacion-ctas">
+            <a href="https://maps.google.com/?q=Cenote+Santa+Rosa+Homun+Yucatan" class="cta-btn cta-btn--filled" target="_blank" rel="noopener noreferrer">
+              <span>Cómo llegar</span>
+            </a>
+            <a href="https://wa.me/529995085367" class="cta-btn ubicacion-wa" target="_blank" rel="noopener noreferrer">
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ubicacion-section {
+    background: var(--color-stone);
+    padding: clamp(80px, 10vw, 160px) 0;
+  }
+  .ubicacion-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 500px;
+  }
+  .ubicacion-map { border-radius: 4px; overflow: hidden; }
+  .ubicacion-map iframe { display: block; width: 100%; height: 100%; min-height: 500px; }
+  .ubicacion-info {
+    padding: clamp(32px, 4vw, 64px); display: flex; align-items: center;
+  }
+  .ubicacion-title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(32px, 4vw, 48px); color: var(--color-limestone); margin-bottom: 40px;
+  }
+  .ubicacion-detail {
+    display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px;
+  }
+  .ubicacion-detail svg { flex-shrink: 0; margin-top: 3px; }
+  .ubicacion-label {
+    display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-gold); margin-bottom: 4px;
+  }
+  .ubicacion-value {
+    display: block; font-family: var(--font-body); font-size: 15px; font-weight: 400;
+    color: var(--color-limestone); opacity: 0.8;
+  }
+  .ubicacion-ctas {
+    display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap;
+  }
+  .ubicacion-wa {
+    border-color: var(--color-cenote); color: var(--color-cenote);
+  }
+  @media (max-width: 900px) {
+    .ubicacion-layout { grid-template-columns: 1fr; }
+    .ubicacion-map iframe { min-height: 300px; }
+  }
+</style>

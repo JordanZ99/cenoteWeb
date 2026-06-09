@@ -1,0 +1,138 @@
+---
+// Cenote Abierto — scroll-driven image reveal
+---
+
+<section class="section cenote-abierto-section">
+  <div class="cenote-abierto-layout">
+    <div class="cenote-abierto-content">
+      <div class="cenote-abierto-text fade-left">
+        <h2 class="cenote-abierto-title">CENOTE ABIERTO</h2>
+        <p class="cenote-abierto-desc">
+          Disfruta del cenote al aire libre bañado por el sol de Yucatán.
+          Un oasis natural de agua turquesa rodeado de vegetación exuberante,
+          ideal para nadar y reconectar con la naturaleza.
+        </p>
+        <div class="cenote-abierto-data">
+          <div class="data-row">
+            <span class="data-row__label">Tipo</span>
+            <span class="data-row__value">Cenote abierto al aire libre</span>
+          </div>
+          <div class="data-row">
+            <span class="data-row__label">Tiempo máximo</span>
+            <span class="data-row__value">1 hora por cenote</span>
+          </div>
+        </div>
+        <div class="cenote-notice">
+          <div class="cenote-notice-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-cenote)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>
+            </svg>
+          </div>
+          <div class="cenote-notice-content">
+            <span class="cenote-notice-label">Protección del cenote</span>
+            <p>Para preservar la cristalinidad de nuestras aguas, no está permitido el uso de bloqueador solar ni repelente. Contamos con áreas de enjuague antes de ingresar.</p>
+          </div>
+        </div>
+        <a href="https://wa.me/529995085367?text=Hola,%20quiero%20información%20sobre%20el%20cenote%20abierto" class="cta-btn cta-btn--filled cenote-abierto-cta" target="_blank" rel="noopener noreferrer">
+          <span>Más información</span>
+        </a>
+      </div>
+    </div>
+    <div class="cenote-abierto-image" id="cenote-abierto-reveal">
+      <img
+        src="/cenoteAbierto.jpg"
+        alt="Mujer nadando en el cenote abierto"
+        class="cenote-abierto-img"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  (function() {
+    const el = document.getElementById('cenote-abierto-reveal');
+    if (!el) return;
+    const img = el.querySelector('img');
+    if (!img) return;
+
+    let ticking = false;
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // progress: 0 = element just entering viewport, 1 = element centered
+        const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)));
+        // Translate the taller image within the mask container
+        const maxTranslate = el.offsetHeight * 0.3; // 30% of container height
+        const translateY = (0.5 - progress) * maxTranslate;
+        img.style.transform = `translateY(${translateY}px) scale(1.1)`;
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+
+<style>
+  .cenote-abierto-section {
+    background: var(--color-limestone);
+    padding: clamp(80px, 10vw, 160px) 0;
+  }
+  .cenote-abierto-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 80px);
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+  }
+  .cenote-abierto-image {
+    overflow: hidden;
+    border-radius: 4px;
+    height: clamp(400px, 55vw, 700px);
+  }
+  .cenote-abierto-img {
+    width: 100%;
+    height: 130%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+    will-change: transform;
+  }
+  .cenote-abierto-title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(32px, 4vw, 52px); color: var(--color-stone);
+    margin-bottom: 24px; line-height: 1.1;
+  }
+  .cenote-abierto-desc {
+    font-family: var(--font-body); font-weight: 300; font-size: 16px;
+    color: var(--color-stone); opacity: 0.75; line-height: 1.8; margin-bottom: 40px;
+  }
+  .cenote-notice {
+    margin-top: 32px; display: flex; gap: 16px; align-items: flex-start;
+    padding: 24px; border: 1px solid var(--color-cenote); border-radius: 4px;
+    background: rgba(0, 168, 181, 0.04);
+  }
+  .cenote-notice-icon { flex-shrink: 0; margin-top: 2px; }
+  .cenote-notice-label {
+    display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-cenote); margin-bottom: 8px;
+  }
+  .cenote-notice-content p {
+    font-family: var(--font-body); font-size: 14px; color: var(--color-stone);
+    opacity: 0.75; line-height: 1.7;
+  }
+  .cenote-abierto-cta { margin-top: 40px; }
+  @media (max-width: 900px) {
+    .cenote-abierto-layout { grid-template-columns: 1fr; }
+    .cenote-abierto-image { height: 350px; }
+  }
+</style>

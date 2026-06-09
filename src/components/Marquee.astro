@@ -1,0 +1,79 @@
+---
+// Marquee Band Section
+const features = [
+  'Cenote Subterráneo', 'Cenote Abierto', 'Videomapping Maya',
+  'Restaurante Regional', 'Cabañas', 'Pet Friendly',
+  'Ceremonias Mayas', 'Museo Maya', 'Pirámide',
+];
+---
+
+<section class="section marquee-section">
+  <div class="marquee-line marquee-line--top"></div>
+  <div class="marquee-track">
+    <div class="marquee-content" id="marquee-inner">
+      {features.map((f) => (
+        <span class="marquee-item">✦ {f}</span>
+      ))}
+      {features.map((f) => (
+        <span class="marquee-item">✦ {f}</span>
+      ))}
+    </div>
+  </div>
+  <div class="marquee-line marquee-line--bottom"></div>
+</section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('marquee-inner');
+    if (!track) return;
+
+    let pos = 0;
+    let baseSpeed = 1.5;
+    let lastScroll = window.scrollY;
+    let rafId;
+
+    function animate() {
+      const delta = Math.abs(window.scrollY - lastScroll);
+      lastScroll = window.scrollY;
+      const speed = baseSpeed + Math.min(delta * 0.03, 3);
+
+      pos -= speed;
+      if (Math.abs(pos) >= track.scrollWidth / 2) pos = 0;
+      track.style.transform = `translateX(${pos}px)`;
+      rafId = requestAnimationFrame(animate);
+    }
+
+    rafId = requestAnimationFrame(animate);
+  });
+</script>
+
+<style>
+  .marquee-section {
+    background: var(--color-stone);
+    padding: 28px 0;
+    overflow: hidden;
+  }
+  .marquee-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(201, 168, 76, 0.3);
+  }
+  .marquee-track {
+    overflow: hidden;
+    padding: 20px 0;
+  }
+  .marquee-content {
+    display: flex;
+    white-space: nowrap;
+    will-change: transform;
+  }
+  .marquee-item {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--color-gold-light);
+    padding: 0 32px;
+    flex-shrink: 0;
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+// Restaurante — real food photos from public/
+const dishes = [
+  { name: 'Cochinita Pibil', image: '/meseroConComida.jpg' },
+  { name: 'Poc Chuc', image: '/señoraCocinando.jpg' },
+  { name: 'Salbutes', image: '/Turistas.jpg' },
+];
+---
+
+<section id="restaurante" class="section restaurante-section">
+  <div class="section-inner">
+    <div class="restaurante-header fade-up">
+      <h2 class="restaurante-title">Sabor de Yucatán</h2>
+      <p class="restaurante-desc">
+        Disfruta de la auténtica gastronomía yucateca preparada con ingredientes frescos de la región.
+        Desayunos, comidas y antojitos regionales en un entorno rodeado de naturaleza.
+        Abierto todos los días de 10:00 AM a 6:00 PM.
+      </p>
+    </div>
+    <div class="restaurante-grid">
+      {dishes.map((dish, i) => (
+        <div class={`restaurante-card fade-up`} style={`transition-delay: ${i * 0.15}s`}>
+          <div class="restaurante-card-image">
+            <img
+              src={dish.image}
+              alt={dish.name}
+              class="restaurante-card-img"
+              loading="lazy"
+            />
+            <div class="restaurante-card-overlay">
+              <span class="restaurante-card-name">{dish.name}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .restaurante-section {
+    background: var(--color-limestone);
+    padding: clamp(80px, 10vw, 160px) 0;
+  }
+  .restaurante-header {
+    text-align: center; max-width: 650px;
+    margin: 0 auto clamp(48px, 6vw, 80px);
+  }
+  .restaurante-title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(36px, 5vw, 64px); color: var(--color-stone); margin-bottom: 24px;
+  }
+  .restaurante-desc {
+    font-family: var(--font-body); font-weight: 300; font-size: 16px;
+    color: var(--color-stone); opacity: 0.7; line-height: 1.8;
+  }
+  .restaurante-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .restaurante-card-image {
+    position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 4/5;
+  }
+  .restaurante-card-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .restaurante-card:hover .restaurante-card-img {
+    transform: scale(1.05);
+  }
+  .restaurante-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(13, 11, 8, 0.75) 100%);
+    display: flex; align-items: flex-end; padding: 24px;
+  }
+  .restaurante-card-name {
+    font-family: var(--font-heading); font-weight: 600; font-size: 22px; color: var(--color-limestone);
+  }
+  @media (max-width: 768px) {
+    .restaurante-grid { grid-template-columns: 1fr; gap: 16px; }
+    .restaurante-card-image { aspect-ratio: 16/9; }
+  }
+</style>

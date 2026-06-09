@@ -1,0 +1,74 @@
+---
+// Tarifas Section
+---
+
+<section id="tarifas" class="section tarifas-section">
+  <div class="section-inner">
+    <h2 class="tarifas-title fade-up">Tarifas</h2>
+    <div class="tarifas-cards">
+      <div class="tarifas-card fade-up">
+        <span class="tarifas-card-label">ADULTOS</span>
+        <span class="tarifas-card-price">$280</span>
+        <span class="tarifas-card-currency">MXN</span>
+      </div>
+      <div class="tarifas-card fade-up" style="transition-delay: 0.15s">
+        <span class="tarifas-card-label">NIÑOS</span>
+        <span class="tarifas-card-price">$230</span>
+        <span class="tarifas-card-currency">MXN</span>
+      </div>
+    </div>
+    <p class="tarifas-note fade-up">
+      No se permite el ingreso de alimentos ni bebidas externos. Contamos con restaurante y tienda de conveniencia dentro del destino.
+    </p>
+    <div class="tarifas-cta fade-up">
+      <a href="https://wa.me/529995085367?text=Hola,%20quiero%20reservar%20mi%20lugar" class="cta-btn cta-btn--filled" target="_blank" rel="noopener noreferrer">
+        <span>Reservar ahora</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tarifas-section {
+    background: var(--color-obsidian);
+    padding: clamp(80px, 10vw, 160px) 0;
+  }
+  .tarifas-title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(36px, 5vw, 64px); color: var(--color-limestone);
+    text-align: center; margin-bottom: clamp(48px, 6vw, 80px);
+  }
+  .tarifas-cards {
+    display: flex; justify-content: center;
+    gap: clamp(24px, 4vw, 48px); margin-bottom: 48px;
+  }
+  .tarifas-card {
+    text-align: center;
+    padding: clamp(40px, 5vw, 64px) clamp(48px, 6vw, 96px);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    border-radius: 4px;
+    background: rgba(201, 168, 76, 0.03);
+    min-width: 240px;
+    transition: border-color 0.4s ease;
+  }
+  .tarifas-card:hover { border-color: rgba(201, 168, 76, 0.4); }
+  .tarifas-card-label {
+    display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.3em; color: var(--color-gold); margin-bottom: 20px;
+  }
+  .tarifas-card-price {
+    display: block; font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(48px, 6vw, 72px); color: var(--color-limestone);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .tarifas-card-currency {
+    display: block; font-family: var(--font-body); font-size: 14px; font-weight: 400;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-limestone); opacity: 0.5;
+  }
+  .tarifas-note {
+    font-family: var(--font-body); font-size: 13px; font-weight: 400;
+    color: var(--color-limestone); opacity: 0.45; text-align: center;
+    max-width: 500px; margin: 0 auto 48px; line-height: 1.7;
+  }
+  .tarifas-cta { text-align: center; }
+</style>

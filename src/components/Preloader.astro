@@ -1,0 +1,92 @@
+---
+// Preloader Component
+---
+
+<div id="preloader">
+  <div class="preloader-inner">
+    <h1 class="preloader-text">SANTA ROSA</h1>
+  </div>
+  <div class="preloader-bar">
+    <div class="preloader-bar-fill"></div>
+  </div>
+</div>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    const preloader = document.getElementById('preloader');
+    const fill = document.querySelector('.preloader-bar-fill');
+    if (!preloader || !fill) return;
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 18;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        fill.style.width = '100%';
+        setTimeout(() => {
+          preloader.style.clipPath = 'inset(0 0 100% 0)';
+          setTimeout(() => {
+            preloader.style.display = 'none';
+            // Notify Hero that preloader is done
+            document.dispatchEvent(new CustomEvent('preloader:done'));
+          }, 1000);
+        }, 400);
+      } else {
+        fill.style.width = progress + '%';
+      }
+    }, 100);
+  });
+</script>
+
+<style>
+  #preloader {
+    position: fixed;
+    inset: 0;
+    background: var(--color-obsidian);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: clip-path 1s var(--ease-in-out);
+    clip-path: inset(0 0 0 0);
+  }
+
+  .preloader-inner {
+    opacity: 0;
+    animation: preloaderFadeIn 1.5s ease forwards;
+  }
+
+  .preloader-text {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(36px, 8vw, 72px);
+    letter-spacing: 0.2em;
+    color: var(--color-gold-light);
+    text-transform: uppercase;
+  }
+
+  .preloader-bar {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(280px, 60vw);
+    height: 2px;
+    background: rgba(201, 168, 76, 0.15);
+    overflow: hidden;
+  }
+
+  .preloader-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--color-gold);
+    transition: width 0.1s linear;
+  }
+
+  @keyframes preloaderFadeIn {
+    to { opacity: 1; }
+  }
+</style>

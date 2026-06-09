@@ -1,0 +1,417 @@
+---
+// Hero Section — Animated frame sequence intro
+---
+
+<section id="hero" class="hero">
+  <!-- Frame sequence layer -->
+  <div class="hero-sequence" id="hero-sequence">
+    <img
+      id="hero-frame"
+      src="/HeroAnimated/scene00001.webp"
+      alt="Cenote Santa Rosa"
+      class="hero-frame"
+      draggable="false"
+    />
+    <div class="hero-overlay"></div>
+  </div>
+
+  <!-- Final hero background (hidden until sequence ends) -->
+  <div class="hero-bg" id="hero-bg">
+    <img
+      src="/CenoteHero.png"
+      alt="Cenote Santa Rosa"
+      class="hero-bg-img"
+      loading="eager"
+      fetchpriority="high"
+      draggable="false"
+    />
+    <div class="hero-overlay"></div>
+  </div>
+
+  <!-- Explore button (shown over first frame) -->
+  <div class="hero-explore" id="hero-explore">
+    <button class="explore-btn" id="hero-explore-btn">
+      <span class="explore-btn-text">Explorar Cenote Santa Rosa</span>
+      <span class="explore-btn-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <!-- Hero text content (hidden until sequence ends) -->
+  <div class="hero-content" id="hero-content">
+    <div class="hero-eyebrow" id="hero-eyebrow">Homún, Yucatán</div>
+
+    <h1 class="hero-title" id="hero-title">
+      <span class="hero-name">Cenote</span>
+      <span class="hero-name">Santa Rosa</span>
+    </h1>
+
+    <div class="hero-divider" id="hero-divider"></div>
+
+    <div class="hero-ctas" id="hero-ctas">
+      <a href="#videomapping" class="cta-btn cta-btn--filled hero-cta-primary">
+        <span>Ver el espectáculo</span>
+      </a>
+      <a href="#cenotes" class="cta-btn hero-cta-secondary">
+        <span>Explorar el cenote</span>
+      </a>
+    </div>
+  </div>
+
+
+</section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.gsap) return;
+
+    const heroSequence = document.getElementById('hero-sequence');
+    const heroFrame = document.getElementById('hero-frame');
+    const heroBg = document.getElementById('hero-bg');
+    const heroExplore = document.getElementById('hero-explore');
+    const heroExploreBtn = document.getElementById('hero-explore-btn');
+    const heroContent = document.getElementById('hero-content');
+
+    if (!heroSequence || !heroFrame || !heroBg || !heroExplore || !heroExploreBtn || !heroContent) return;
+
+    // ─── Lock scroll during Hero animation ───
+    document.body.style.overflow = 'hidden';
+
+    // ─── Build frame list ───
+    // HeroAnimated has 24 frames: scene00001, 00003, 00005 … 00047
+    const frames = [];
+    for (let i = 1; i <= 24; i++) {
+      const num = String(2 * i - 1).padStart(5, '0');
+      frames.push(`/HeroAnimated/scene${num}.webp`);
+    }
+
+
+
+    // ─── Wait for preloader to finish ───
+    function onPreloaderDone() {
+      // Reveal the first frame with a subtle fade
+      gsap.fromTo(heroSequence,
+        { opacity: 0 },
+        { opacity: 1, duration: 1.2, ease: 'power2.out' }
+      );
+
+      // Show the explore button after a short pause
+      gsap.to(heroExplore, {
+        opacity: 1,
+        duration: 0.8,
+        delay: 0.8,
+        ease: 'power2.out'
+      });
+    }
+
+    document.addEventListener('preloader:done', onPreloaderDone);
+
+    // ─── Button click → play frame sequence ───
+    heroExploreBtn.addEventListener('click', () => {
+      // Disable further clicks
+      heroExploreBtn.disabled = true;
+
+      // Fade out button
+      gsap.to(heroExplore, {
+        opacity: 0,
+        y: -20,
+        duration: 0.5,
+        ease: 'power3.in',
+        onComplete: () => {
+          heroExplore.style.display = 'none';
+          playSequence();
+        }
+      });
+    });
+
+    function playSequence() {
+      let currentFrame = 0;
+      const totalFrames = frames.length;
+      const frameInterval = 83; // ~12 fps → smooth but not too fast
+
+      function showFrame() {
+        if (currentFrame >= totalFrames) {
+          // Sequence complete → reveal hero
+          onSequenceComplete();
+          return;
+        }
+
+        // Use preloaded image source if loaded, else use URL
+        heroFrame.src = frames[currentFrame];
+
+        // Unlock scroll when scene00045 (index 22) is shown
+        if (currentFrame === 22) {
+          document.body.style.overflow = '';
+        }
+
+        currentFrame++;
+        setTimeout(showFrame, frameInterval);
+      }
+
+      // Small pause before starting
+      setTimeout(showFrame, 200);
+    }
+
+    function onSequenceComplete() {
+      // Instantly show hero-bg behind the sequence (no animation = no flicker)
+      heroBg.style.visibility = 'visible';
+
+      // Fade out the sequence layer to reveal hero-bg
+      gsap.to(heroSequence, {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          heroSequence.style.display = 'none';
+          animateHeroText();
+        }
+      });
+    }
+
+    function animateHeroText() {
+      // Ensure parent container is visible so children can show
+      heroContent.style.opacity = '1';
+
+      const tl = gsap.timeline();
+
+      // Eyebrow appears first
+      tl.fromTo('#hero-eyebrow',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+      );
+
+      // Title lines appear one by one with faster stagger
+      tl.fromTo('#hero-title .hero-name',
+        { opacity: 0, y: 30, clipPath: 'inset(0 0 100% 0)' },
+        { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 0.9, stagger: 0.2, ease: 'power3.out' },
+        '-=0.3'
+      );
+
+      // Gold divider expands from center
+      tl.fromTo('#hero-divider',
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.7, ease: 'power3.inOut' },
+        '-=0.5'
+      );
+
+      // CTAs fade in
+      tl.fromTo('#hero-ctas',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.3'
+      );
+    }
+
+    // ─── Smooth scroll for anchor links ───
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ─── Sequence layer ─── */
+  .hero-sequence {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+  }
+
+  .hero-frame {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* ─── Background ─── */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    visibility: hidden;
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg,
+        rgba(13,11,8,0.55) 0%,
+        rgba(13,11,8,0.20) 35%,
+        rgba(13,11,8,0.25) 60%,
+        rgba(13,11,8,0.70) 100%
+      );
+  }
+
+  /* ─── Explore button ─── */
+  .hero-explore {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .explore-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 48px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    letter-spacing: 0.06em;
+    color: var(--color-obsidian);
+    background: var(--color-gold);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+  }
+
+  .explore-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-gold-light);
+    transform: translateX(-101%);
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .explore-btn:hover::before {
+    transform: translateX(0);
+  }
+
+  .explore-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 40px rgba(201, 168, 76, 0.35);
+  }
+
+  .explore-btn:active {
+    transform: scale(0.98);
+  }
+
+  .explore-btn-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .explore-btn-icon {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+
+  .explore-btn:hover .explore-btn-icon {
+    transform: translateX(4px);
+  }
+
+  /* ─── Content ─── */
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    max-width: 850px;
+    padding: 0 clamp(24px, 5vw, 80px);
+    margin-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    color: #5C3D2E;
+    margin-bottom: 28px;
+    opacity: 0;
+  }
+
+  .hero-title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hero-name {
+    display: block;
+    font-family: var(--font-heading);
+    font-variant: small-caps;
+    font-weight: 700;
+    font-size: clamp(42px, 7vw, 96px);
+    color: var(--color-limestone);
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    text-shadow: 0 4px 60px rgba(0,0,0,0.4);
+    opacity: 0;
+  }
+
+  .hero-divider {
+    width: 250px;
+    height: 1px;
+    background: var(--color-gold);
+    margin: 5px 0 88px;
+    transform: scaleX(0);
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    margin-top: 200px;
+  }
+
+  .hero-cta-secondary {
+    border-color: rgba(232, 220, 200, 0.3);
+    color: var(--color-limestone);
+  }
+
+  .hero-cta-secondary::before {
+    background: rgba(232, 220, 200, 0.1);
+  }
+
+  .hero-cta-secondary:hover {
+    color: var(--color-limestone);
+  }
+
+
+</style>
