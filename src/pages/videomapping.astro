@@ -1,0 +1,436 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Videomapping — Cenote Santa Rosa">
+
+  <!-- ═══ Hero with auto-playing frame sequence ═══ -->
+  <section class="vm-hero" id="vm-hero">
+    <!-- Frame sequence layer (auto-plays on load) -->
+    <div class="vm-sequence" id="vm-sequence">
+      <img
+        id="vm-frame"
+        src="/ScrollDrive/scene00001.webp"
+        alt=""
+        class="vm-hero-frame"
+        draggable="false"
+      />
+      <div class="vm-hero-overlay"></div>
+    </div>
+
+    <!-- Final hero background (hidden until sequence ends) -->
+    <div class="vm-hero-bg" id="vm-hero-bg">
+      <img src="/ScrollDrive/scene00069.webp" alt="Videomapping Cenote Santa Rosa" class="vm-hero-bg-img" loading="eager" draggable="false" />
+      <div class="vm-hero-overlay"></div>
+    </div>
+
+    <!-- Hero text (hidden until sequence ends) -->
+    <div class="vm-hero-content" id="vm-hero-content">
+      <span class="badge">ÚNICO EN YUCATÁN</span>
+      <h1 class="vm-hero-title">El Primer Cenote<br/>Con Videomapping</h1>
+      <div class="vm-hero-divider"></div>
+      <p class="vm-hero-subtitle">
+        Sumérgete en una experiencia multisensorial donde la tecnología se une con la naturaleza.
+      </p>
+      <div class="vm-hero-ctas">
+        <a href="#info" class="cta-btn cta-btn--filled vm-hero-cta">
+          <span>Conoce más</span>
+        </a>
+        <button class="cta-btn vm-hero-back-btn" id="vm-hero-back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Volver</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Videomapping Info ═══ -->
+  <section id="info" class="section vm-info-section">
+    <div class="vm-info-layout">
+      <div class="vm-info-image">
+        <img
+          src="/ScrollDrive/scene00069.webp"
+          alt="Videomapping en el Cenote Santa Rosa"
+          class="vm-info-img"
+          loading="lazy"
+        />
+      </div>
+      <div class="vm-info-content">
+        <div class="vm-info-text fade-right">
+          <p class="vm-info-desc">
+            Proyecciones sobre las paredes de piedra caliza narran historias ancestrales mayas,
+            transformando el cenote en un museo vivo bajo la tierra.
+          </p>
+          <div class="vm-info-data">
+            <div class="data-row">
+              <span class="data-row__label">Horario</span>
+              <span class="data-row__value">Fines de semana y puentes festivos</span>
+            </div>
+            <div class="data-row">
+              <span class="data-row__label">Funciones</span>
+              <span class="data-row__value">11:00 AM — 4:00 PM</span>
+            </div>
+            <div class="data-row">
+              <span class="data-row__label">Cupo</span>
+              <span class="data-row__value">Limitado por función</span>
+            </div>
+            <div class="data-row">
+              <span class="data-row__label">Producido por</span>
+              <span class="data-row__value">NILU</span>
+            </div>
+          </div>
+          <a href="https://wa.me/529995085367?text=Hola,%20quiero%20asegurar%20mi%20lugar%20para%20el%20videomapping" class="cta-btn cta-btn--filled vm-info-cta" target="_blank" rel="noopener noreferrer">
+            <span>Asegurar mi lugar</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.gsap) return;
+
+    const vmSequence = document.getElementById('vm-sequence');
+    const vmFrame = document.getElementById('vm-frame');
+    const vmBg = document.getElementById('vm-hero-bg');
+    const vmContent = document.getElementById('vm-hero-content');
+    const vmBackBtn = document.getElementById('vm-hero-back-btn');
+
+    if (!vmSequence || !vmFrame || !vmBg || !vmContent || !vmBackBtn) return;
+
+    let isAnimating = false;
+
+    // ─── Build frame list (all 69 ScrollDrive frames) ───
+    const frames: string[] = [];
+    for (let i = 1; i <= 69; i++) {
+      frames.push(`/ScrollDrive/scene${String(i).padStart(5, '0')}.webp`);
+    }
+
+    // ─── Preload first batch of frames ───
+    frames.slice(0, 15).forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    // ─── Fade in the sequence layer ───
+    gsap.fromTo(vmSequence,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power2.out',
+        onComplete: () => playSequence()
+      }
+    );
+
+    // ─── Forward sequence (on page load) ───
+    function playSequence() {
+      let currentFrame = 0;
+      const totalFrames = frames.length;
+      const frameInterval = 60;
+
+      function showFrame() {
+        if (currentFrame >= totalFrames) {
+          onSequenceComplete();
+          return;
+        }
+        vmFrame.src = frames[currentFrame];
+        currentFrame++;
+        setTimeout(showFrame, frameInterval);
+      }
+
+      setTimeout(showFrame, 300);
+    }
+
+    function onSequenceComplete() {
+      vmBg.style.visibility = 'visible';
+
+      gsap.to(vmSequence, {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          vmSequence.style.display = 'none';
+          document.body.style.overflow = '';
+          animateHeroText();
+        }
+      });
+    }
+
+    // ─── Reverse sequence (Volver button) ───
+    vmBackBtn.addEventListener('click', () => {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      // Hide hero text
+      gsap.to(vmContent, {
+        opacity: 0,
+        y: -20,
+        duration: 0.4,
+        ease: 'power3.in',
+        onComplete: () => {
+          vmContent.style.opacity = '0';
+          vmContent.style.transform = '';
+
+          // Show the sequence layer again
+          vmSequence.style.display = '';
+          vmSequence.style.opacity = '1';
+
+          // Play frames in reverse
+          playReverseSequence();
+        }
+      });
+    });
+
+    function playReverseSequence() {
+      let currentFrame = frames.length - 1;
+      const frameInterval = 60;
+
+      function showFrame() {
+        if (currentFrame < 0) {
+          onReverseComplete();
+          return;
+        }
+        vmFrame.src = frames[currentFrame];
+        currentFrame--;
+        setTimeout(showFrame, frameInterval);
+      }
+
+      setTimeout(showFrame, 100);
+    }
+
+    function onReverseComplete() {
+      // We're back at frame 00001 — navigate to the main page
+      vmBg.style.visibility = 'hidden';
+
+      gsap.to(vmSequence, {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          window.location.href = '/';
+        }
+      });
+    }
+
+    // ─── Hero text animation ───
+    function animateHeroText() {
+      vmContent.style.opacity = '1';
+
+      const tl = gsap.timeline();
+
+      tl.fromTo('.badge',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+      );
+
+      tl.fromTo('.vm-hero-title',
+        { opacity: 0, y: 30, clipPath: 'inset(0 0 100% 0)' },
+        { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 0.9, ease: 'power3.out' },
+        '-=0.3'
+      );
+
+      tl.fromTo('.vm-hero-divider',
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.7, ease: 'power3.inOut' },
+        '-=0.5'
+      );
+
+      tl.fromTo('.vm-hero-subtitle',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.3'
+      );
+
+      tl.fromTo('.vm-hero-ctas',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.3'
+      );
+    }
+
+    // ─── Smooth scroll for anchor links ───
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  });
+</script>
+
+<style>
+  /* ─── Hero ─── */
+  .vm-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ─── Sequence layer (auto-playing frames) ─── */
+  .vm-sequence {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+  }
+
+  .vm-hero-frame {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* ─── Background ─── */
+  .vm-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    visibility: hidden;
+  }
+
+  .vm-hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .vm-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg,
+        rgba(13,11,8,0.55) 0%,
+        rgba(13,11,8,0.20) 35%,
+        rgba(13,11,8,0.25) 60%,
+        rgba(13,11,8,0.70) 100%
+      );
+  }
+
+  .vm-hero-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 850px;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+  }
+
+  .vm-hero-title {
+    font-family: var(--font-heading);
+    font-variant: small-caps;
+    font-weight: 700;
+    font-size: clamp(42px, 7vw, 96px);
+    color: var(--color-limestone);
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    text-shadow: 0 4px 60px rgba(0,0,0,0.4);
+    margin: 24px 0;
+    opacity: 0;
+  }
+
+  .vm-hero-divider {
+    width: 250px;
+    height: 1px;
+    background: var(--color-gold);
+    margin: 5px 0 40px;
+    transform: scaleX(0);
+  }
+
+  .vm-hero-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--color-limestone);
+    opacity: 0.8;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .vm-hero-ctas {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .vm-hero-back-btn {
+    border-color: rgba(232, 220, 200, 0.3);
+    color: var(--color-limestone);
+  }
+
+  .vm-hero-back-btn::before {
+    background: rgba(232, 220, 200, 0.1);
+  }
+
+  .vm-hero-back-btn:hover {
+    color: var(--color-limestone);
+  }
+
+  /* ─── Info section ─── */
+  .vm-info-section {
+    background: var(--color-obsidian);
+    padding: clamp(80px, 10vw, 160px) 0;
+  }
+
+  .vm-info-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 80px);
+    display: grid;
+    grid-template-columns: 55% 45%;
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+  }
+
+  .vm-info-image {
+    overflow: hidden;
+    border-radius: 4px;
+    height: clamp(400px, 55vw, 700px);
+  }
+
+  .vm-info-img {
+    width: 100%;
+    height: 130%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+  }
+
+  .vm-info-desc {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--color-limestone);
+    opacity: 0.75;
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+
+  .vm-info-data { margin-bottom: 48px; }
+  .vm-info-cta { margin-top: 8px; }
+
+  @media (max-width: 900px) {
+    .vm-info-layout { grid-template-columns: 1fr; }
+    .vm-info-image { height: 350px; }
+  }
+</style>

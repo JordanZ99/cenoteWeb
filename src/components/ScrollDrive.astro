@@ -1,0 +1,172 @@
+---
+// ScrollDrive Section — scroll-driven frame-by-frame animation
+// 69 frames from public/ScrollDrive/, transitioning from Hero (frame 1 = CenoteHero)
+// to Videomapping (frame 69 = videomapping.jpg)
+---
+
+<section id="scroll-drive" class="scroll-drive">
+  <div class="scroll-drive-sticky">
+    <!-- Double buffer: two overlapping images, only the top one is visible -->
+    <img
+      id="sd-frame-a"
+      src="/ScrollDrive/scene00001.webp"
+      alt=""
+      class="sd-frame-img"
+      draggable="false"
+    />
+    <img
+      id="sd-frame-b"
+      src="/ScrollDrive/scene00001.webp"
+      alt=""
+      class="sd-frame-img sd-frame-hidden"
+      draggable="false"
+    />
+    <div class="sd-gradient-overlay"></div>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    const TOTAL_FRAMES = 69;
+    const section = document.getElementById('scroll-drive');
+    const frameA = document.getElementById('sd-frame-a');
+    const frameB = document.getElementById('sd-frame-b');
+    if (!section || !frameA || !frameB) return;
+
+    // ─── Build URL list ───
+    const frameUrls: string[] = [];
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      frameUrls.push(`/ScrollDrive/scene${String(i).padStart(5, '0')}.webp`);
+    }
+
+    // ─── Preload adjacent frames (next 3) for smoother scrolling ───
+    function preloadNearby(center: number) {
+      for (let offset = 1; offset <= 3; offset++) {
+        const idx = center + offset;
+        if (idx < TOTAL_FRAMES) {
+          const p = new Image();
+          p.src = frameUrls[idx];
+        }
+      }
+    }
+
+    // ─── Double-buffer state ───
+    let currentFrameIndex = 0;
+    let activeBuffer: 'a' | 'b' = 'a';
+    const topImg = frameA;
+    const bottomImg = frameB;
+
+    function showFrame(index: number) {
+      if (index === currentFrameIndex) return;
+      const newIndex = index;
+      currentFrameIndex = newIndex;
+
+      const hidden = activeBuffer === 'a' ? bottomImg : topImg;
+      const visible = activeBuffer === 'a' ? topImg : bottomImg;
+
+      hidden.src = frameUrls[newIndex];
+
+      function swapBuffers() {
+        // Only swap if we haven't moved to a different frame while loading
+        if (currentFrameIndex !== newIndex) return;
+        hidden.classList.remove('sd-frame-hidden');
+        visible.classList.add('sd-frame-hidden');
+        activeBuffer = activeBuffer === 'a' ? 'b' : 'a';
+      }
+
+      if (hidden.complete) {
+        hidden.onload = null;
+        swapBuffers();
+      } else {
+        hidden.onload = () => {
+          if (currentFrameIndex !== newIndex) {
+            hidden.onload = null;
+            return;
+          }
+          swapBuffers();
+          hidden.onload = null;
+        };
+      }
+
+      // Prefetch the next few frames
+      preloadNearby(newIndex);
+    }
+
+    // ─── Scroll handler ───
+    let ticking = false;
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = section.offsetHeight;
+        const vh = window.innerHeight;
+
+        // Progress: 0 when section top aligns with viewport top, 1 when bottom aligns
+        const scrollable = sectionHeight - vh;
+        const scrolled = -rect.top;
+        const progress = Math.min(1, Math.max(0, scrolled / scrollable));
+
+        // Map progress to frame index (0-based)
+        const frameIndex = Math.min(
+          TOTAL_FRAMES - 1,
+          Math.floor(progress * TOTAL_FRAMES)
+        );
+
+        showFrame(frameIndex);
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  });
+</script>
+
+<style>
+  .scroll-drive {
+    height: calc(6vh * 69);
+    position: relative;
+  }
+
+  .scroll-drive-sticky {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .sd-frame-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    z-index: 1;
+  }
+
+  .sd-frame-hidden {
+    z-index: 0;
+  }
+
+  .sd-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background:
+      linear-gradient(180deg,
+        rgba(13,11,8,0.55) 0%,
+        rgba(13,11,8,0.20) 35%,
+        rgba(13,11,8,0.25) 60%,
+        rgba(13,11,8,0.70) 100%
+      );
+    pointer-events: none;
+  }
+</style>
