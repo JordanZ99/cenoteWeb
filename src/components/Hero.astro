@@ -77,8 +77,12 @@
     const heroExplore = document.getElementById('hero-explore');
     const heroExploreBtn = document.getElementById('hero-explore-btn');
     const heroContent = document.getElementById('hero-content');
+    const heroEyebrow = document.getElementById('hero-eyebrow');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDivider = document.getElementById('hero-divider');
+    const heroCtas = document.getElementById('hero-ctas');
 
-    if (!heroSequence || !heroFrame || !heroBg || !heroExplore || !heroExploreBtn || !heroContent) return;
+    if (!heroSequence || !heroFrame || !heroBg || !heroExplore || !heroExploreBtn || !heroContent || !heroEyebrow || !heroTitle || !heroDivider || !heroCtas) return;
 
     // ─── Lock scroll during Hero animation ───
     document.body.style.overflow = 'hidden';
@@ -261,10 +265,28 @@
         const scrolled = -rect.top;
         const progress = Math.min(1, Math.max(0, scrolled / scrollable));
 
-        // ─── Fade out hero text in the first 15% of scroll ───
-        const textOpacity = Math.max(0, 1 - progress / 0.15);
-        heroContent.style.opacity = textOpacity;
-        heroContent.style.pointerEvents = textOpacity > 0 ? '' : 'none';
+        // ─── Animate hero elements on scroll ───
+        // Title + eyebrow slide UP, CTAs slide DOWN, first 15% of scroll
+        const p = Math.min(1, progress / 0.15);
+        const easeIn = p * p; // accelerates for a natural feel
+
+        // Upper content: eyebrow + title slide up 180px with fade
+        const tUp = -easeIn * 180;
+        const upperOpacity = 1 - p;
+        heroEyebrow.style.transform = `translateY(${tUp}px)`;
+        heroEyebrow.style.opacity = upperOpacity;
+        heroTitle.style.transform = `translateY(${tUp}px)`;
+        heroTitle.style.opacity = upperOpacity;
+
+        // Divider scales down and fades
+        heroDivider.style.transform = `scaleX(${Math.max(0, 1 - easeIn)})`;
+        heroDivider.style.opacity = upperOpacity;
+
+        // Lower content: CTAs slide down 180px with fade
+        const tDown = easeIn * 180;
+        heroCtas.style.transform = `translateY(${tDown}px)`;
+        heroCtas.style.opacity = 1 - p;
+        heroCtas.style.pointerEvents = p > 0 ? 'none' : '';
 
         // ─── Progress frames based on scroll ───
         const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES));
