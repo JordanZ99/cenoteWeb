@@ -33,6 +33,16 @@ const iconMap: Record<string, string> = {
           data-amenidad={a.id}
         >
           <img src={a.image} alt={a.title} class="amenidades-cell-img" loading="lazy" />
+          {a.id === 'juegos' && (
+            <button class="juegos-arrow juegos-arrow--left" aria-label="Anterior">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+          )}
+          {a.id === 'juegos' && (
+            <button class="juegos-arrow juegos-arrow--right" aria-label="Siguiente">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          )}
           <div class="amenidades-cell-content">
             <div class="amenidades-cell-icon" set:html={`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconMap[a.icon]}</svg>`} />
             <h3 class="amenidades-cell-title">{a.title}</h3>
@@ -153,7 +163,9 @@ const iconMap: Record<string, string> = {
     const juegosClose = document.getElementById('juegos-modal-close');
     if (!juegosCell || !juegosModal || !juegosClose) return;
 
-    juegosCell.addEventListener('click', () => {
+    juegosCell.addEventListener('click', (e) => {
+      // Don't open modal if clicking arrows
+      if (e.target.closest('.juegos-arrow')) return;
       juegosModal.classList.add('open');
     });
 
@@ -173,6 +185,69 @@ const iconMap: Record<string, string> = {
         juegosModal.classList.remove('open');
       }
     });
+
+    // ─── Juegos card image rotation ───
+    const juegosSrcs = ['/juegos1.jpg', '/juegos2.jpg', '/juegos3.jpg', '/juegos4.jpg', '/juegos5.jpg'];
+    const juegosImg = document.querySelector('.amenidades-cell--juegos > .amenidades-cell-img');
+    const prevBtn = document.querySelector('.juegos-arrow--left');
+    const nextBtn = document.querySelector('.juegos-arrow--right');
+    let currentIdx = 0;
+    let rotationInterval;
+    let fadeTimeout;
+
+    if (!juegosImg) return;
+
+    function showJuegosPhoto(index, animate) {
+      clearTimeout(fadeTimeout);
+      if (animate !== false) {
+        juegosImg.classList.add('juegos-img--fading');
+        fadeTimeout = setTimeout(() => {
+          juegosImg.src = juegosSrcs[index];
+          juegosImg.classList.remove('juegos-img--fading');
+        }, 400);
+      } else {
+        juegosImg.src = juegosSrcs[index];
+      }
+    }
+
+    function advanceJuegosPhoto() {
+      currentIdx = (currentIdx + 1) % juegosSrcs.length;
+      showJuegosPhoto(currentIdx);
+    }
+
+    function goToPrevJuegosPhoto() {
+      currentIdx = (currentIdx - 1 + juegosSrcs.length) % juegosSrcs.length;
+      showJuegosPhoto(currentIdx);
+      resetRotationInterval();
+    }
+
+    function goToNextJuegosPhoto() {
+      currentIdx = (currentIdx + 1) % juegosSrcs.length;
+      showJuegosPhoto(currentIdx);
+      resetRotationInterval();
+    }
+
+    function resetRotationInterval() {
+      clearInterval(rotationInterval);
+      rotationInterval = setInterval(advanceJuegosPhoto, 3000);
+    }
+
+    // Start auto-rotation
+    rotationInterval = setInterval(advanceJuegosPhoto, 3000);
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goToPrevJuegosPhoto();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goToNextJuegosPhoto();
+      });
+    }
   });
 </script>
 
@@ -506,6 +581,61 @@ const iconMap: Record<string, string> = {
     border-left: 3px solid var(--color-gold);
     background: rgba(201, 168, 76, 0.05);
     border-radius: 0 10px 10px 0;
+  }
+
+  /* ─── Juegos card arrows ─── */
+  .amenidades-cell--juegos {
+    position: relative;
+  }
+
+  .juegos-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    color: var(--color-limestone);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, background 0.3s ease, transform 0.2s ease;
+  }
+
+  .amenidades-cell--juegos:hover .juegos-arrow {
+    opacity: 1;
+  }
+
+  .juegos-arrow:hover {
+    background: rgba(201, 168, 76, 0.6);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .juegos-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  .juegos-arrow--left {
+    left: 8px;
+  }
+
+  .juegos-arrow--right {
+    right: 8px;
+  }
+
+  /* Crossfade transition for juegos image */
+  .amenidades-cell--juegos > .amenidades-cell-img {
+    transition: opacity 0.4s ease;
+  }
+
+  .amenidades-cell--juegos > .amenidades-cell-img.juegos-img--fading {
+    opacity: 0;
   }
 
   @media (max-width: 900px) {
