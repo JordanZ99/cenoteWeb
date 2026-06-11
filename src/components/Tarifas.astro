@@ -39,7 +39,7 @@
     text-align: center; margin-bottom: clamp(48px, 6vw, 80px);
   }
   .tarifas-cards {
-    display: flex; justify-content: center;
+    display: flex; justify-content: center; flex-wrap: wrap;
     gap: clamp(24px, 4vw, 48px); margin-bottom: 48px;
   }
   .tarifas-card {
@@ -48,7 +48,8 @@
     border: 1px solid rgba(201, 168, 76, 0.2);
     border-radius: 4px;
     background: rgba(201, 168, 76, 0.03);
-    min-width: 240px;
+    flex: 1 1 240px;
+    max-width: 360px;
     transition: border-color 0.4s ease;
   }
   .tarifas-card:hover { border-color: rgba(201, 168, 76, 0.4); }
