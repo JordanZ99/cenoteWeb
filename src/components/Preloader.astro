@@ -9,6 +9,7 @@
   <div class="preloader-bar">
     <div class="preloader-bar-fill"></div>
   </div>
+  <p class="preloader-subtitle">Preparando experiencia personalizada</p>
 </div>
 
 <script>
@@ -34,13 +35,17 @@
 
     const TOTAL = frameUrls.length; // 24 + 69 = 93
     let loaded = 0;
+    let decoded = 0;
+    let finishTriggered = false;
 
-    function updateProgress() {
-      loaded++;
-      const pct = Math.round((loaded / TOTAL) * 100);
-      fill.style.width = pct + '%';
+    function updateBar() {
+      fill.style.width = Math.round((loaded / TOTAL) * 100) + '%';
+    }
 
-      if (loaded >= TOTAL) {
+    function tryFinish() {
+      if (finishTriggered) return;
+      if (decoded >= TOTAL) {
+        finishTriggered = true;
         fill.style.width = '100%';
         // Small pause so user can see 100% before revealing
         setTimeout(() => {
@@ -56,8 +61,23 @@
     // ─── Start loading all frames ───
     frameUrls.forEach((url) => {
       const img = new Image();
-      img.onload = updateProgress;
-      img.onerror = updateProgress; // count errors too so bar doesn't stall
+      img.onload = () => {
+        loaded++;
+        updateBar();
+        // Ensure the image is fully decoded before counting as ready
+        // This prevents stuttering when the Hero sequence starts
+        (img.decode ? img.decode() : Promise.resolve())
+          .finally(() => {
+            decoded++;
+            tryFinish();
+          });
+      };
+      img.onerror = () => {
+        loaded++;
+        decoded++;
+        updateBar();
+        tryFinish();
+      };
       img.src = url;
     });
   });
@@ -93,7 +113,7 @@
 
   .preloader-bar {
     position: absolute;
-    bottom: 60px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
     width: min(280px, 60vw);
@@ -109,7 +129,26 @@
     transition: width 0.1s linear;
   }
 
+  .preloader-subtitle {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    opacity: 0;
+    animation: subtitleFadeIn 2s ease 0.5s forwards;
+    white-space: nowrap;
+  }
+
   @keyframes preloaderFadeIn {
     to { opacity: 1; }
+  }
+
+  @keyframes subtitleFadeIn {
+    to { opacity: 0.6; }
   }
 </style>
