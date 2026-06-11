@@ -6,7 +6,7 @@ const amenities = [
   { title: 'Pet Friendly', desc: 'Tus mascotas son bienvenidas en todo el destino.', icon: 'paw', image: '/mascotas.jpg', id: 'pet' },
   { title: 'Juegos Tradicionales', desc: 'Feria tradicional con juegos, snacks y dulces típicos yucatecos.', icon: 'gamepad', image: '/juegos1.jpg', id: 'juegos' },
   { title: 'Huerto & Hamacas', desc: 'Relájate en hamacas rodeadas de huerto orgánico y vegetación tropical.', icon: 'leaf', image: '/hamacas.jpg', id: 'huerto' },
-  { title: 'Feria Tradicional', desc: 'Eventos culturales, artesanías y gastronomía tradicional yucateca.', icon: 'tent', image: '/catrines.jpg', id: 'feria' },
+  { title: 'Ceremonia Tradicional', desc: 'Vive una ceremonia maya dentro del cenote — haz tu boda de una forma única.', icon: 'tent', image: '/catrines.jpg', id: 'feria' },
   { title: 'Cruz Verde', desc: 'Puesto de primeros auxilios disponible durante todo el día.', icon: 'cross', image: '/Cruz Verde.jpg', id: 'cruz' },
   { title: 'Spots Instagrameables', desc: 'Múltiples puntos fotográficos con diseño cuidado y paisajes únicos.', icon: 'camera', image: '/spotInstagrameable.jpg', id: 'spots' },
 ];
@@ -27,7 +27,7 @@ const iconMap: Record<string, string> = {
     <div class="amenidades-bento">
       {amenities.map((a, i) => (
         <div
-          class={`amenidades-cell amenidades-cell--${a.id} fade-up amenidad-tilt ${a.id === 'pet' || a.id === 'juegos' ? 'amenidades-cell--expandable' : ''}`}
+          class={`amenidades-cell amenidades-cell--${a.id} fade-up amenidad-tilt ${a.id === 'pet' || a.id === 'juegos' || a.id === 'feria' ? 'amenidades-cell--expandable' : ''}`}
           style={`transition-delay: ${i * 0.1}s`}
           data-amenidad={a.id}
         >
@@ -78,6 +78,33 @@ const iconMap: Record<string, string> = {
         <h3 class="pet-modal-title">petfriendly</h3>
         <p class="pet-modal-text">Puedes traer a tus mascotas porque somos Petfriendly.</p>
         <p class="pet-modal-note">Nota: Pueden andar en todas las instalaciones a excepción dentro de los cenotes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Ceremonia Tradicional Modal ─── -->
+  <div class="feria-modal" id="feria-modal">
+    <div class="feria-modal-card">
+      <button class="feria-modal-close" id="feria-modal-close" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+      <div class="feria-modal-body">
+        <p class="feria-modal-sub">Una experiencia inolvidable</p>
+        <h3 class="feria-modal-title">Ceremonia Tradicional</h3>
+        <div class="feria-modal-divider"></div>
+        <p class="feria-modal-text">
+          Haz tu boda de una forma especial y única, dentro de un cenote con una ceremonia maya.
+          Deja que el misticismo y la cultura sean parte de este momento tan importante.
+        </p>
+        <div class="feria-modal-footer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.06-2.91a2.5 2.5 0 00-2.94-.09z"/>
+            <path d="M12 15c-3.13 0-5.24-1.87-6-4.5 1.57-1 3.94-1.5 6-1.5s4.43.5 6 1.5c-.76 2.63-2.87 4.5-6 4.5z"/>
+          </svg>
+          <span>Cenote Santa Rosa</span>
+        </div>
       </div>
     </div>
   </div>
@@ -186,6 +213,33 @@ const iconMap: Record<string, string> = {
         juegosModal.classList.remove('open');
       }
     });
+
+    // ─── Ceremonia Tradicional modal ───
+    const feriaCell = document.querySelector('.amenidades-cell--feria');
+    const feriaModal = document.getElementById('feria-modal');
+    const feriaClose = document.getElementById('feria-modal-close');
+    if (feriaCell && feriaModal && feriaClose) {
+      feriaCell.addEventListener('click', () => {
+        feriaModal.classList.add('open');
+      });
+
+      feriaClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        feriaModal.classList.remove('open');
+      });
+
+      feriaModal.addEventListener('click', (e) => {
+        if (e.target === feriaModal) {
+          feriaModal.classList.remove('open');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && feriaModal.classList.contains('open')) {
+          feriaModal.classList.remove('open');
+        }
+      });
+    }
 
     // ─── Juegos card image reel rotation ───
     const juegosSrcs = ['/juegos1.jpg', '/juegos2.jpg', '/juegos3.jpg', '/juegos4.jpg', '/juegos5.jpg'];
@@ -591,6 +645,132 @@ const iconMap: Record<string, string> = {
     border-left: 3px solid var(--color-gold);
     background: rgba(201, 168, 76, 0.05);
     border-radius: 0 10px 10px 0;
+  }
+
+  /* ─── Ceremonia Modal ─── */
+  .feria-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-out-expo);
+  }
+  .feria-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .feria-modal-card {
+    position: relative;
+    background: var(--color-limestone);
+    border-radius: 12px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.4s var(--ease-out-expo);
+    overflow: hidden;
+  }
+  .open .feria-modal-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .feria-modal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .feria-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--color-stone);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    padding: 8px;
+    z-index: 2;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+  .feria-modal-close:hover {
+    opacity: 1;
+  }
+
+  .feria-modal-body {
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .feria-modal-sub {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .feria-modal-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(26px, 5vw, 34px);
+    color: var(--color-stone);
+    margin-bottom: 20px;
+  }
+
+  .feria-modal-divider {
+    width: 40px;
+    height: 2px;
+    background: var(--color-gold);
+    opacity: 0.5;
+    margin: 0 auto 24px;
+    border-radius: 1px;
+  }
+
+  .feria-modal-text {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-stone);
+    opacity: 0.85;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .feria-modal-footer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-gold);
+    opacity: 0.6;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    border-radius: 20px;
+  }
+
+  .feria-modal-footer svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
   }
 
   /* ─── Juegos card arrows ─── */
