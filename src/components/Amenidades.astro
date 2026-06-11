@@ -1,10 +1,11 @@
 ---
 // Amenidades — Bento Grid with real images from public/
 const petImages = ['/mascotas.jpg', '/mascotas2.jpg'];
+const juegosImages = ['/juegos1.jpg', '/juegos2.jpg', '/juegos3.jpg', '/juegos4.jpg', '/juegos5.jpg'];
 
 const amenities = [
   { title: 'Pet Friendly', desc: 'Tus mascotas son bienvenidas en todo el destino.', icon: 'paw', image: '/mascotas.jpg', id: 'pet' },
-  { title: 'Destino Seguro', desc: 'Zona certificada con personal capacitado y áreas seguras para toda la familia.', icon: 'shield', image: '/certificado.jpg', id: 'seguro' },
+  { title: 'Juegos Tradicionales', desc: 'Feria tradicional con juegos, snacks y dulces típicos yucatecos.', icon: 'gamepad', image: '/juegos1.jpg', id: 'juegos' },
   { title: 'Huerto & Hamacas', desc: 'Relájate en hamacas rodeadas de huerto orgánico y vegetación tropical.', icon: 'leaf', image: '/hamacas.jpg', id: 'huerto' },
   { title: 'Feria Tradicional', desc: 'Eventos culturales, artesanías y gastronomía tradicional yucateca.', icon: 'tent', image: '/catrines.jpg', id: 'feria' },
   { title: 'Cruz Verde', desc: 'Puesto de primeros auxilios disponible durante todo el día.', icon: 'cross', image: '/Cruz Verde.jpg', id: 'cruz' },
@@ -13,7 +14,7 @@ const amenities = [
 
 const iconMap: Record<string, string> = {
   paw: '<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 22c-4 0-7-2-7-5 0-2 1.5-3 3-4s3-3 4-6c1 3 2.5 4.5 4 6s3 2 3 4c0 3-3 5-7 5z"/>',
-  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
+  gamepad: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="11" r="1"/><circle cx="15" cy="13" r="1" opacity="0.3"/><circle cx="18" cy="13" r="1" opacity="0.3"/>',
   leaf: '<path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L7 18"/><path d="M17 8A14 14 0 013 20"/><path d="M17 8c3-1 7 0 7 0s1 4 0 7"/>',
   tent: '<path d="M3.5 21L12 3l8.5 18H3.5z"/><line x1="12" y1="3" x2="12" y2="21"/>',
   cross: '<path d="M12 2v20M2 12h20"/>',
@@ -27,7 +28,7 @@ const iconMap: Record<string, string> = {
     <div class="amenidades-bento">
       {amenities.map((a, i) => (
         <div
-          class={`amenidades-cell amenidades-cell--${a.id} fade-up amenidad-tilt ${a.id === 'pet' ? 'amenidades-cell--expandable' : ''}`}
+          class={`amenidades-cell amenidades-cell--${a.id} fade-up amenidad-tilt ${a.id === 'pet' || a.id === 'juegos' ? 'amenidades-cell--expandable' : ''}`}
           style={`transition-delay: ${i * 0.1}s`}
           data-amenidad={a.id}
         >
@@ -64,6 +65,56 @@ const iconMap: Record<string, string> = {
       </div>
     </div>
   </div>
+
+  <!-- ─── Juegos Tradicionales Modal ─── -->
+  <div class="juegos-modal" id="juegos-modal">
+    <div class="juegos-modal-card">
+      <button class="juegos-modal-close" id="juegos-modal-close" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+      <div class="juegos-modal-photos">
+        {juegosImages.map((src) => (
+          <img src={src} alt="Juegos tradicionales en Cenote Santa Rosa" class="juegos-modal-photo" loading="lazy" />
+        ))}
+      </div>
+      <div class="juegos-modal-body">
+        <p class="juegos-modal-sub">Feria Tradicional</p>
+        <h3 class="juegos-modal-title">Juegos Tradicionales</h3>
+        <p class="juegos-modal-text">
+          En Cenote Santa Rosa nos esforzamos por preservar y compartir estas tradiciones con nuestros visitantes.
+          Montamos una feria tradicional la cual será una oportunidad para que nuestros visitantes experimenten
+          la riqueza cultural de nuestra región, con actividades como:
+        </p>
+        <div class="juegos-modal-activities">
+          <div class="juegos-modal-group">
+            <h4>Juegos tradicionales</h4>
+            <ul>
+              <li>Globos / Dardos</li>
+              <li>Canicas</li>
+              <li>Aros</li>
+            </ul>
+          </div>
+          <div class="juegos-modal-group">
+            <h4>Zona de snacks</h4>
+            <ul>
+              <li>Frutas de temporada con chilito artesanal</li>
+              <li>Algodón de azúcar</li>
+              <li>Barquillas dulces</li>
+              <li>Marquesitas</li>
+              <li>Variedad de dulces típicos</li>
+            </ul>
+          </div>
+        </div>
+        <p class="juegos-modal-footer">
+          La feria se monta en nuestras instalaciones y está abierta a todo el público.
+          Esperamos que se unan a nosotros para disfrutar de una tarde divertida y llena de cultura.
+          Estamos emocionados de poder contribuir a la comunidad y preservar nuestras tradiciones al mismo tiempo.
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -93,6 +144,33 @@ const iconMap: Record<string, string> = {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal.classList.contains('open')) {
         modal.classList.remove('open');
+      }
+    });
+
+    // ─── Juegos Tradicionales modal ───
+    const juegosCell = document.querySelector('.amenidades-cell--juegos');
+    const juegosModal = document.getElementById('juegos-modal');
+    const juegosClose = document.getElementById('juegos-modal-close');
+    if (!juegosCell || !juegosModal || !juegosClose) return;
+
+    juegosCell.addEventListener('click', () => {
+      juegosModal.classList.add('open');
+    });
+
+    juegosClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      juegosModal.classList.remove('open');
+    });
+
+    juegosModal.addEventListener('click', (e) => {
+      if (e.target === juegosModal) {
+        juegosModal.classList.remove('open');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && juegosModal.classList.contains('open')) {
+        juegosModal.classList.remove('open');
       }
     });
   });
@@ -135,7 +213,7 @@ const iconMap: Record<string, string> = {
 
   /* Explicit grid placement */
   .amenidades-cell--pet { grid-column: 1 / 3; grid-row: 1 / 3; }
-  .amenidades-cell--seguro { grid-column: 3; grid-row: 1; }
+  .amenidades-cell--juegos { grid-column: 3; grid-row: 1; }
   .amenidades-cell--huerto { grid-column: 4; grid-row: 1; }
   .amenidades-cell--feria { grid-column: 3 / 5; grid-row: 2 / 4; }
   .amenidades-cell--cruz { grid-column: 1; grid-row: 3; }
@@ -152,6 +230,7 @@ const iconMap: Record<string, string> = {
     background: linear-gradient(180deg, transparent 30%, rgba(13,11,8,0.7) 100%);
   }
   .amenidades-cell--pet .amenidades-cell-content,
+  .amenidades-cell--juegos .amenidades-cell-content,
   .amenidades-cell--feria .amenidades-cell-content { min-height: 376px; }
 
   .amenidades-cell-icon { margin-bottom: 16px; }
@@ -270,11 +349,170 @@ const iconMap: Record<string, string> = {
     background: hsla(333, 72%, 52%, 0.05);
   }
 
+  /* ─── Juegos Modal ─── */
+  .juegos-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-out-expo);
+  }
+  .juegos-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .juegos-modal-card {
+    position: relative;
+    background: var(--color-limestone);
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+  .open .juegos-modal-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .juegos-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--color-stone);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    padding: 8px;
+    z-index: 2;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+  .juegos-modal-close:hover {
+    opacity: 1;
+  }
+
+  .juegos-modal-photos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .juegos-modal-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+  .juegos-modal-photo:first-child {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+  }
+
+  .juegos-modal-body {
+    padding: 32px 28px;
+    text-align: left;
+  }
+
+  .juegos-modal-sub {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .juegos-modal-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(24px, 5vw, 32px);
+    color: var(--color-stone);
+    margin-bottom: 20px;
+  }
+
+  .juegos-modal-text {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--color-stone);
+    opacity: 0.8;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .juegos-modal-activities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .juegos-modal-group {
+    padding: 16px 20px;
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    border-radius: 10px;
+    background: rgba(201, 168, 76, 0.04);
+  }
+
+  .juegos-modal-group h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-gold);
+    margin-bottom: 10px;
+  }
+
+  .juegos-modal-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .juegos-modal-group li {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-stone);
+    opacity: 0.75;
+    line-height: 1.8;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .juegos-modal-group li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    opacity: 0.6;
+  }
+
+  .juegos-modal-footer {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-stone);
+    opacity: 0.75;
+    line-height: 1.7;
+    padding: 18px 22px;
+    border-left: 3px solid var(--color-gold);
+    background: rgba(201, 168, 76, 0.05);
+    border-radius: 0 10px 10px 0;
+  }
+
   @media (max-width: 900px) {
     .amenidades-bento { grid-template-columns: 1fr 1fr; }
     .amenidades-cell--pet { grid-column: 1 / 3; grid-row: 1; }
     .amenidades-cell--feria { grid-column: 1 / 3; grid-row: auto; }
-    .amenidades-cell--seguro, .amenidades-cell--huerto,
+    .amenidades-cell--juegos, .amenidades-cell--huerto,
     .amenidades-cell--cruz, .amenidades-cell--spots { grid-column: auto; grid-row: auto; }
     .amenidades-cell--pet .amenidades-cell-content,
     .amenidades-cell--feria .amenidades-cell-content { min-height: 220px; }
@@ -282,7 +520,7 @@ const iconMap: Record<string, string> = {
   @media (max-width: 500px) {
     .amenidades-bento { grid-template-columns: 1fr; }
     .amenidades-cell--pet, .amenidades-cell--feria,
-    .amenidades-cell--seguro, .amenidades-cell--huerto,
+    .amenidades-cell--juegos, .amenidades-cell--huerto,
     .amenidades-cell--cruz, .amenidades-cell--spots { grid-column: 1; grid-row: auto; }
   }
 </style>
