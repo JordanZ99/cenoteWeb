@@ -328,8 +328,12 @@
         e.preventDefault();
         const href = anchor.getAttribute('href');
         if (href === '#scroll-drive') {
-          // Hero IS the scroll-drive; nudge down to start the animation
-          window.scrollBy({ top: window.innerHeight * 0.3, behavior: 'smooth' });
+          // Hero IS the scroll-drive; scroll to the last frame (frame 69 = videomapping)
+          const hero = document.getElementById('scroll-drive');
+          if (hero) {
+            const lastFramePos = hero.offsetTop + hero.offsetHeight - window.innerHeight;
+            window.scrollTo({ top: lastFramePos, behavior: 'smooth' });
+          }
         } else {
           const target = document.querySelector(href);
           if (target) target.scrollIntoView({ behavior: 'smooth' });
