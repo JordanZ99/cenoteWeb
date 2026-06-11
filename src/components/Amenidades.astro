@@ -31,7 +31,14 @@ const iconMap: Record<string, string> = {
           style={`transition-delay: ${i * 0.1}s`}
           data-amenidad={a.id}
         >
-          <img src={a.image} alt={a.title} class="amenidades-cell-img" loading="lazy" />
+          {a.id === 'juegos' ? (
+            <>
+              <img src={a.image} alt={a.title} class="amenidades-cell-img juegos-track-img juegos-track--a" loading="lazy" />
+              <img src={a.image} alt={a.title} class="amenidades-cell-img juegos-track-img juegos-track--b" loading="lazy" style="transform: translateX(100%);" />
+            </>
+          ) : (
+            <img src={a.image} alt={a.title} class="amenidades-cell-img" loading="lazy" />
+          )}
           {a.id === 'juegos' && (
             <button class="juegos-arrow juegos-arrow--left" aria-label="Anterior">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -180,54 +187,79 @@ const iconMap: Record<string, string> = {
       }
     });
 
-    // ─── Juegos card image rotation ───
+    // ─── Juegos card image reel rotation ───
     const juegosSrcs = ['/juegos1.jpg', '/juegos2.jpg', '/juegos3.jpg', '/juegos4.jpg', '/juegos5.jpg'];
-    const juegosImg = document.querySelector('.amenidades-cell--juegos > .amenidades-cell-img');
+    const imgA = document.querySelector('.juegos-track--a');
+    const imgB = document.querySelector('.juegos-track--b');
     const prevBtn = document.querySelector('.juegos-arrow--left');
     const nextBtn = document.querySelector('.juegos-arrow--right');
+    let currentTrack = 0; // 0 = A showing, 1 = B showing
     let currentIdx = 0;
     let rotationInterval;
-    let fadeTimeout;
 
-    if (!juegosImg) return;
+    if (!imgA || !imgB) return;
 
-    function showJuegosPhoto(index, animate) {
-      clearTimeout(fadeTimeout);
+    function showJuegosPhoto(index, animate, direction) {
+      // direction: 1 = slide left (next), -1 = slide right (prev)
+
       if (animate !== false) {
-        juegosImg.classList.add('juegos-img--fading');
-        fadeTimeout = setTimeout(() => {
-          juegosImg.src = juegosSrcs[index];
-          juegosImg.classList.remove('juegos-img--fading');
-        }, 400);
+        const nextTrack = currentTrack === 0 ? 1 : 0;
+        const currentImg = currentTrack === 0 ? imgA : imgB;
+        const nextImg = nextTrack === 0 ? imgA : imgB;
+
+        // dir: which way current slides (next=-100%, prev=+100%)
+        const dir = direction === -1 ? 1 : -1;
+
+        // Position next image off-screen in the opposite direction
+        nextImg.src = juegosSrcs[index];
+        nextImg.style.transition = 'none';
+        nextImg.style.transform = `translateX(${-dir * 100}%)`;
+        void nextImg.offsetWidth;
+
+        // Slide current out, next in — both at full opacity
+        currentImg.style.transition = 'transform 0.45s ease';
+        currentImg.style.transform = `translateX(${dir * 100}%)`;
+
+        nextImg.style.transition = 'transform 0.45s ease';
+        nextImg.style.transform = 'translateX(0)';
+
+        currentTrack = nextTrack;
+        currentIdx = index;
       } else {
-        juegosImg.src = juegosSrcs[index];
+        currentTrack = 0;
+        imgA.style.transition = 'none';
+        imgA.style.transform = 'translateX(0)';
+        imgA.src = juegosSrcs[index];
+        imgB.style.transition = 'none';
+        imgB.style.transform = 'translateX(100%)';
+        currentIdx = index;
       }
     }
 
     function advanceJuegosPhoto() {
-      currentIdx = (currentIdx + 1) % juegosSrcs.length;
-      showJuegosPhoto(currentIdx);
+      const nextIdx = (currentIdx + 1) % juegosSrcs.length;
+      showJuegosPhoto(nextIdx, true, 1);
     }
 
     function goToPrevJuegosPhoto() {
-      currentIdx = (currentIdx - 1 + juegosSrcs.length) % juegosSrcs.length;
-      showJuegosPhoto(currentIdx);
+      const prevIdx = (currentIdx - 1 + juegosSrcs.length) % juegosSrcs.length;
+      showJuegosPhoto(prevIdx, true, -1);
       resetRotationInterval();
     }
 
     function goToNextJuegosPhoto() {
-      currentIdx = (currentIdx + 1) % juegosSrcs.length;
-      showJuegosPhoto(currentIdx);
+      const nextIdx = (currentIdx + 1) % juegosSrcs.length;
+      showJuegosPhoto(nextIdx, true, 1);
       resetRotationInterval();
     }
 
     function resetRotationInterval() {
       clearInterval(rotationInterval);
-      rotationInterval = setInterval(advanceJuegosPhoto, 3000);
+      rotationInterval = setInterval(advanceJuegosPhoto, 5000);
     }
 
     // Start auto-rotation
-    rotationInterval = setInterval(advanceJuegosPhoto, 3000);
+    rotationInterval = setInterval(advanceJuegosPhoto, 5000);
 
     if (prevBtn) {
       prevBtn.addEventListener('click', (e) => {
@@ -607,13 +639,10 @@ const iconMap: Record<string, string> = {
     right: 8px;
   }
 
-  /* Crossfade transition for juegos image */
-  .amenidades-cell--juegos > .amenidades-cell-img {
-    transition: opacity 0.4s ease;
-  }
-
-  .amenidades-cell--juegos > .amenidades-cell-img.juegos-img--fading {
-    opacity: 0;
+  /* Reel slide for juegos track images — full opacity, no fade */
+  .amenidades-cell--juegos .juegos-track-img {
+    transition: none;
+    will-change: transform;
   }
 
   @media (max-width: 900px) {
