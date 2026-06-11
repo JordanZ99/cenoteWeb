@@ -14,8 +14,8 @@
 
     <!-- Number + Title over the image -->
     <div class="inframundo-image-text">
-      <span class="inframundo-number">01</span>
-      <h2 class="inframundo-title inframundo-animate">Cenote Subterráneo</h2>
+      <span class="inframundo-number">02</span>
+      <h2 class="inframundo-title inframundo-animate">El Inframundo Maya</h2>
     </div>
   </div>
 
@@ -23,21 +23,18 @@
   <div class="inframundo-details">
     <div class="inframundo-details-inner">
       <p class="inframundo-desc inframundo-animate">
-        Desciende al corazón de la tierra y contempla un mundo de piedra caliza, aguas cristalinas y formaciones milenarias que han resistido el paso del tiempo.
+        Sumérgete al inframundo en nuestros dos hermosos cenotes, el primero es un cenote subterráneo tipo cueva y el segundo y más nuevo es nuestro cenote abierto al aire libre. Cada uno es único y con aguas cristalinas, ideales para refrescarse.
       </p>
-      <div class="inframundo-stats inframundo-animate">
-        <div class="inframundo-stat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" aria-hidden="true">
-            <path d="M12 2v20M8 6l4-4 4 4M6 12h12"/>
-          </svg>
-          <span>Estalactitas milenarias</span>
-        </div>
-        <div class="inframundo-stat">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-cenote)" stroke-width="1.5" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/>
-          </svg>
-          <span>Aguas cristalinas</span>
+      <div class="inframundo-nota inframundo-animate">
+        <p class="inframundo-nota-text">
+          <strong>Nota:</strong> 1 hora máximo por cenote y no se permite el uso de repelentes y bloqueadores solares para cuidar el agua.
+        </p>
+      </div>
+      <div class="inframundo-precios inframundo-animate">
+        <p class="inframundo-precios-dias">Abrimos todos los días</p>
+        <div class="inframundo-precios-valores">
+          <span class="inframundo-precios-item"><strong>$280</strong> adultos</span>
+          <span class="inframundo-precios-item"><strong>$230</strong> niños</span>
         </div>
       </div>
     </div>
@@ -68,7 +65,7 @@
           const rect = img.closest('.el-inframundo').getBoundingClientRect();
           if (rect.top < window.innerHeight && rect.bottom > 0) {
             const progress = -rect.top / window.innerHeight;
-            img.style.transform = `translateY(${progress * 50}px) scale(1.05)`;
+            img.style.transform = `translateY(${progress * 290}px) scale(1.05)`;
           }
           ticking = false;
         });
@@ -157,25 +154,66 @@
     margin-bottom: 40px;
   }
 
-  .inframundo-stats {
-    display: flex;
-    gap: clamp(24px, 4vw, 48px);
-    flex-wrap: wrap;
+  .inframundo-nota {
+    margin-bottom: 40px;
   }
 
-  .inframundo-stat {
+  .inframundo-nota-text {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: var(--color-limestone);
+    opacity: 0.75;
+    line-height: 1.7;
+    padding: 16px 20px;
+    border-left: 3px solid var(--color-gold);
+    background: rgba(201, 168, 76, 0.06);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .inframundo-nota-text strong {
+    color: var(--color-gold);
+    font-weight: 600;
+  }
+
+  .inframundo-precios {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 24px 28px;
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    border-radius: 8px;
+    background: rgba(201, 168, 76, 0.04);
+  }
+
+  .inframundo-precios-dias {
     font-family: var(--font-body);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
+    color: var(--color-gold);
+  }
+
+  .inframundo-precios-valores {
+    display: flex;
+    gap: 24px;
+  }
+
+  .inframundo-precios-item {
+    font-family: var(--font-body);
+    font-size: 14px;
     color: var(--color-limestone);
-    padding: 12px 20px;
-    border: 1px solid rgba(201, 168, 76, 0.2);
-    border-radius: 4px;
+    opacity: 0.85;
+  }
+
+  .inframundo-precios-item strong {
+    font-size: 20px;
+    color: var(--color-gold);
+    font-weight: 700;
+    opacity: 1;
   }
 
   /* ─── Entrance animations ─── */
