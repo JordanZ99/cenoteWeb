@@ -1,12 +1,14 @@
 ---
 // Amenidades — Bento Grid with real images from public/
+const petImages = ['/mascotas.jpg', '/mascotas2.jpg'];
+
 const amenities = [
   { title: 'Pet Friendly', desc: 'Tus mascotas son bienvenidas en todo el destino.', icon: 'paw', image: '/mascotas.jpg', id: 'pet' },
-  { title: 'Destino Seguro', desc: 'Zona certificada con personal capacitado y áreas seguras para toda la familia.', icon: 'shield', image: null, id: 'seguro' },
-  { title: 'Huerto & Hamacas', desc: 'Relájate en hamacas rodeadas de huerto orgánico y vegetación tropical.', icon: 'leaf', image: null, id: 'huerto' },
+  { title: 'Destino Seguro', desc: 'Zona certificada con personal capacitado y áreas seguras para toda la familia.', icon: 'shield', image: '/certificado.jpg', id: 'seguro' },
+  { title: 'Huerto & Hamacas', desc: 'Relájate en hamacas rodeadas de huerto orgánico y vegetación tropical.', icon: 'leaf', image: '/hamacas.jpg', id: 'huerto' },
   { title: 'Feria Tradicional', desc: 'Eventos culturales, artesanías y gastronomía tradicional yucateca.', icon: 'tent', image: '/catrines.jpg', id: 'feria' },
-  { title: 'Cruz Verde', desc: 'Puesto de primeros auxilios disponible durante todo el día.', icon: 'cross', image: null, id: 'cruz' },
-  { title: 'Spots Instagrameables', desc: 'Múltiples puntos fotográficos con diseño cuidado y paisajes únicos.', icon: 'camera', image: null, id: 'spots' },
+  { title: 'Cruz Verde', desc: 'Puesto de primeros auxilios disponible durante todo el día.', icon: 'cross', image: '/Cruz Verde.jpg', id: 'cruz' },
+  { title: 'Spots Instagrameables', desc: 'Múltiples puntos fotográficos con diseño cuidado y paisajes únicos.', icon: 'camera', image: '/spotInstagrameable.jpg', id: 'spots' },
 ];
 
 const iconMap: Record<string, string> = {
@@ -24,20 +26,77 @@ const iconMap: Record<string, string> = {
     <h2 class="amenidades-title fade-up">Todo en un Solo Lugar</h2>
     <div class="amenidades-bento">
       {amenities.map((a, i) => (
-        <div class={`amenidades-cell amenidades-cell--${a.id} fade-up`} style={`transition-delay: ${i * 0.1}s`}>
-          {a.image ? (
-            <img src={a.image} alt={a.title} class="amenidades-cell-img" loading="lazy" />
-          ) : null}
+        <div
+          class={`amenidades-cell amenidades-cell--${a.id} fade-up amenidad-tilt ${a.id === 'pet' ? 'amenidades-cell--expandable' : ''}`}
+          style={`transition-delay: ${i * 0.1}s`}
+          data-amenidad={a.id}
+        >
+          <img src={a.image} alt={a.title} class="amenidades-cell-img" loading="lazy" />
           <div class="amenidades-cell-content">
             <div class="amenidades-cell-icon" set:html={`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconMap[a.icon]}</svg>`} />
             <h3 class="amenidades-cell-title">{a.title}</h3>
             <p class="amenidades-cell-desc">{a.desc}</p>
           </div>
+
+
         </div>
       ))}
     </div>
   </div>
+  <!-- ─── Pet Friendly Modal ─── -->
+  <div class="pet-modal" id="pet-modal">
+    <div class="pet-modal-card">
+      <button class="pet-modal-close" id="pet-modal-close" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+      <div class="pet-modal-photos">
+        {petImages.map((src) => (
+          <img src={src} alt="Mascota en Cenote Santa Rosa" class="pet-modal-photo" loading="lazy" />
+        ))}
+      </div>
+      <div class="pet-modal-body">
+        <p class="pet-modal-sub">También Somos</p>
+        <h3 class="pet-modal-title">petfriendly</h3>
+        <p class="pet-modal-text">Puedes traer a tus mascotas porque somos Petfriendly.</p>
+        <p class="pet-modal-note">Nota: Pueden andar en todas las instalaciones a excepción dentro de los cenotes.</p>
+      </div>
+    </div>
+  </div>
 </section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    // ─── Pet Friendly modal ───
+    const petCell = document.querySelector('.amenidades-cell--pet');
+    const modal = document.getElementById('pet-modal');
+    const closeBtn = document.getElementById('pet-modal-close');
+    if (!petCell || !modal || !closeBtn) return;
+
+    petCell.addEventListener('click', () => {
+      modal.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      modal.classList.remove('open');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        modal.classList.remove('open');
+      }
+    });
+  });
+</script>
 
 <style>
   .amenidades-section {
@@ -53,13 +112,26 @@ const iconMap: Record<string, string> = {
     display: grid; grid-template-columns: repeat(4, 1fr);
     grid-template-rows: auto auto; gap: 16px;
   }
+  .amenidad-tilt {
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.5s ease;
+    will-change: transform;
+  }
+
   .amenidades-cell {
     position: relative; overflow: hidden; border-radius: 4px;
     border: 1px solid rgba(44, 36, 22, 0.08);
     background: rgba(44, 36, 22, 0.03);
-    transition: box-shadow 0.5s ease; min-height: 180px;
+    min-height: 180px;
+    cursor: default;
   }
-  .amenidades-cell:hover { box-shadow: 0 0 40px rgba(201, 168, 76, 0.15); }
+  .amenidades-cell:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 40px rgba(201, 168, 76, 0.15);
+  }
+
+  .amenidades-cell--expandable {
+    cursor: pointer;
+  }
 
   /* Explicit grid placement */
   .amenidades-cell--pet { grid-column: 1 / 3; grid-row: 1 / 3; }
@@ -90,6 +162,112 @@ const iconMap: Record<string, string> = {
   .amenidades-cell-desc {
     font-family: var(--font-body); font-weight: 400; font-size: 14px;
     color: var(--color-limestone); opacity: 0.8; line-height: 1.6;
+  }
+
+  /* ─── Modal overlay (Pet Friendly) ─── */
+  .pet-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-out-expo);
+  }
+  .pet-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pet-modal-card {
+    position: relative;
+    background: var(--color-limestone);
+    border-radius: 12px;
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+  .open .pet-modal-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .pet-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--color-stone);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    padding: 8px;
+    z-index: 2;
+  }
+  .pet-modal-close:hover {
+    opacity: 0.8;
+  }
+
+  .pet-modal-photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .pet-modal-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pet-modal-body {
+    padding: 32px 28px;
+    text-align: center;
+  }
+
+  .pet-modal-sub {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    opacity: 0.5;
+    margin-bottom: 4px;
+  }
+
+  .pet-modal-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 36px);
+    color: hsl(333, 72%, 52%);
+    margin-bottom: 20px;
+  }
+
+  .pet-modal-text {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--color-stone);
+    opacity: 0.8;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .pet-modal-note {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: hsl(333, 72%, 52%);
+    opacity: 0.7;
+    line-height: 1.6;
+    padding: 14px 18px;
+    border: 1px solid hsla(333, 72%, 52%, 0.2);
+    border-radius: 8px;
+    background: hsla(333, 72%, 52%, 0.05);
   }
 
   @media (max-width: 900px) {
