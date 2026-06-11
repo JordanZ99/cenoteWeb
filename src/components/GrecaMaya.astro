@@ -1,0 +1,82 @@
+---
+// GrecaMaya.astro — Xicalcoliuhqui (step fret / greca) Maya pattern
+// A single continuous line forming alternating stepped spirals.
+// Inspired by pre-Hispanic Maya architectural motifs.
+//
+// 🎯 Usage as section divider:
+//   <GrecaMaya color="var(--color-gold)" strokeWidth={2.5} />
+//
+// 🎯 Usage as CSS background-image with repeat-x:
+//   <GrecaMaya id="greca-defs" />
+//   Or use the .greca-bg CSS class (applies data-URI version automatically)
+//   or reference var(--greca-pattern) in your CSS.
+
+export interface Props {
+  color?: string;
+  strokeWidth?: number;
+  className?: string;
+  /** Fixed ID for the SVG pattern (for CSS reference) */
+  id?: string;
+}
+
+const { color = '#000000', strokeWidth = 2, className = '', id } = Astro.props;
+
+// ─── SVG pattern path: 1 period = 128×32 = 2 mirrored spirals ───
+// Module 1 (right spiral):  bottom→right 20→up 8→left 10→up 8→right 10→up 8→left 10→up 8
+// Module 2 (left mirrored):  bottom→left 20→up 8→right 10→up 8→left 10→up 8→right 10→up 8
+const pathD = 'M 0,32 h 20 v -8 h -10 v -8 h 10 v -8 h -10 v -8 h 54 v 32 h -20 v -8 h 10 v -8 h -10 v -8 h 10 v -8 h 74 v 32';
+const patternId = id || `greca-pat`;
+
+// ─── Data URI version for CSS background-image ───
+const svgPattern = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="32"><defs><pattern id="g" width="128" height="32" patternUnits="userSpaceOnUse"><path d="${pathD}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linejoin="miter" stroke-linecap="butt"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>`;
+const dataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgPattern)}`;
+---
+
+<svg
+  class={`greca-maya ${className}`}
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <defs>
+    <pattern
+      id={patternId}
+      width="128"
+      height="32"
+      patternUnits="userSpaceOnUse"
+    >
+      <path
+        d={pathD}
+        fill="none"
+        stroke={color}
+        stroke-width={strokeWidth}
+        stroke-linejoin="miter"
+        stroke-linecap="butt"
+      />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+</svg>
+
+<style>
+  .greca-maya {
+    display: block;
+    width: 100%;
+    height: clamp(24px, 3vw, 40px);
+  }
+
+  /* ─── Utility: use as CSS background-image (repeat-x) ───
+   * Usage: <div class="greca-bg"></div>
+   * Or in your CSS:  background: var(--greca-pattern) repeat-x;
+   */
+  :root {
+    --greca-pattern: url("{dataUri}");
+  }
+
+  .greca-bg {
+    display: block;
+    width: 100%;
+    height: clamp(24px, 3vw, 40px);
+    background: var(--greca-pattern) repeat-x;
+    background-size: 128px auto;
+  }
+</style>
