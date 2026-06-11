@@ -1,0 +1,219 @@
+---
+// Petfriendly — Sección de mascotas con fondo oscuro
+const petImages = ['/mascotas.jpg', '/mascotas2.jpg'];
+---
+
+<section class="section pf-section" id="petfriendly">
+  <div class="section-inner">
+    <div class="pf-layout">
+      <!-- Left: text -->
+      <div class="pf-text-col fade-left">
+        <div class="pf-badge">PET FRIENDLY</div>
+        <h2 class="pf-title">También Somos <span class="pf-title-highlight">petfriendly</span></h2>
+        <p class="pf-desc">
+          Puedes traer a tus mascotas porque somos Petfriendly.
+        </p>
+        <div class="pf-note">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.06-2.91a2.5 2.5 0 00-2.94-.09z"/>
+            <path d="M12 15c-3.13 0-5.24-1.87-6-4.5 1.57-1 3.94-1.5 6-1.5s4.43.5 6 1.5c-.76 2.63-2.87 4.5-6 4.5z"/>
+            <circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/>
+            <path d="M16.5 4.5c1.5 1.26 2 5 2 5s-3.74-.5-5-2c-.71-.84-.7-2.13.06-2.91a2.5 2.5 0 012.94-.09z"/>
+          </svg>
+          <span>Pueden andar en todas las instalaciones a excepción dentro de los cenotes.</span>
+        </div>
+      </div>
+
+      <!-- Right: image collage -->
+      <div class="pf-images-col fade-right">
+        <div class="pf-images-grid">
+          <div class="pf-image-wrap pf-image-wrap--primary">
+            <img src={petImages[0]} alt="Mascota en Cenote Santa Rosa" class="pf-img" loading="lazy" />
+          </div>
+          <div class="pf-image-wrap pf-image-wrap--secondary">
+            <img src={petImages[1]} alt="Mascota en Cenote Santa Rosa" class="pf-img" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  // ─── Fade-up observer ───
+  (function() {
+    const els = document.querySelectorAll('#petfriendly .fade-left, #petfriendly .fade-right');
+    els.forEach(el => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(el);
+    });
+  })();
+</script>
+
+<style>
+  .pf-section {
+    background: var(--color-stone);
+    padding: clamp(80px, 10vw, 160px) 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle paw-print texture overlay */
+  .pf-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(201, 168, 76, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(201, 168, 76, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .pf-layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+  }
+
+  /* ─── Left: text ─── */
+  .pf-text-col {
+    max-width: 520px;
+  }
+
+  .pf-badge {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    padding: 6px 16px;
+    margin-bottom: 24px;
+  }
+
+  .pf-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 64px);
+    color: var(--color-limestone);
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .pf-title-highlight {
+    color: var(--color-gold);
+  }
+
+  .pf-desc {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--color-limestone);
+    opacity: 0.8;
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  .pf-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    border-left: 3px solid var(--color-gold);
+    background: rgba(201, 168, 76, 0.06);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .pf-note svg {
+    flex-shrink: 0;
+    color: var(--color-gold);
+    margin-top: 2px;
+  }
+
+  .pf-note span {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-limestone);
+    opacity: 0.75;
+    line-height: 1.6;
+  }
+
+  /* ─── Right: images ─── */
+  .pf-images-col {
+    position: relative;
+  }
+
+  .pf-images-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 16px;
+    align-items: end;
+  }
+
+  .pf-image-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+
+  .pf-image-wrap--primary {
+    aspect-ratio: 3 / 4;
+  }
+
+  .pf-image-wrap--secondary {
+    aspect-ratio: 1 / 1;
+    margin-bottom: clamp(40px, 5vh, 80px);
+  }
+
+  .pf-image-wrap:hover {
+    transform: translateY(-4px);
+  }
+
+  .pf-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+
+  .pf-image-wrap:hover .pf-img {
+    transform: scale(1.05);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 900px) {
+    .pf-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .pf-text-col {
+      max-width: 100%;
+    }
+
+    .pf-images-grid {
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .pf-image-wrap--secondary {
+      margin-bottom: 0;
+    }
+  }
+</style>
